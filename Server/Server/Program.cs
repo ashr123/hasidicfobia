@@ -14,7 +14,8 @@ namespace Server
 
         static void Main(string[] args)
         {
-            TcpListener server = new TcpListener(IPAddress.Any, 9999);
+
+            TcpListener server = new TcpListener(IPAddress.Any, 11000);
             // we set our IP address as server's address, and we also set the port: 9999
 
             server.Start();  // this will start the server
