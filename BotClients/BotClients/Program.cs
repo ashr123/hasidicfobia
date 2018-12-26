@@ -6,10 +6,10 @@ namespace BotClients
 {
 	public class Program
 	{
-		private static void Main(string[] args)
+		public static void Main(string[] args)
 		{
 			UdpClient client = new UdpClient();
-			IPEndPoint ep = new IPEndPoint(IPAddress.Parse("132.72.235.219"), 11000); // endpoint where server is listening
+			IPEndPoint ep = new IPEndPoint(IPAddress.Parse("10.0.2.15"), 11000); // endpoint where server is listening
 			client.Connect(ep);
 
 			// send data
