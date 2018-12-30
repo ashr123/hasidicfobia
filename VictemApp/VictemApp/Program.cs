@@ -13,10 +13,23 @@ namespace VictemApp
 		private static string pass = CreatePassword(6);
 		private static List<bool> connectedBots = new List<bool>();
 
+		private static string GetLocalIPAddress()
+		{
+			IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+			foreach (IPAddress ip in host.AddressList)
+			{
+				if (ip.AddressFamily == AddressFamily.InterNetwork)
+				{
+					return ip.ToString();
+				}
+			}
+			throw new Exception("No network adapters with an IPv4 address in the system!");
+		}
+
 		static void Main(string[] args)
 		{
 			int port = FreeTcpPort();
-			Console.WriteLine("Server listening on port " + port + ", password is " + pass);
+			Console.WriteLine("Server listening on port " + port +" and IP address " + GetLocalIPAddress() + ", password is " + pass);
 			TcpListener server = new TcpListener(IPAddress.Any, port);
 			// we set our IP address as server's address, and we also set the port: 9999
 
@@ -53,7 +66,7 @@ namespace VictemApp
 						{
 							int index = connectedBots.Count;
 							connectedBots.Add(true);
-							if (GetActiveBots() < 10)
+							if (GetActiveBots() < 1)
 							{
 								int time = 60 * 1000;
 								Timer timer = new Timer(time);

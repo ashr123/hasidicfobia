@@ -85,11 +85,6 @@ namespace Server
 				catch(Exception e) {
 					Console.WriteLine("incorecct input " + e.Message);
 				}
-				
-
-
-				
-					
 			}
 		}
 
