@@ -66,7 +66,7 @@ namespace VictemApp
 						{
 							int index = connectedBots.Count;
 							connectedBots.Add(true);
-							if (GetActiveBots() < 1)
+							if (GetActiveBots() < 10)
 							{
 								int time = 60 * 1000;
 								Timer timer = new Timer(time);
@@ -76,7 +76,7 @@ namespace VictemApp
 							}
 							else
 							{
-								Console.WriteLine(msgstring);
+								Console.Write(msgstring);
 							}
 							client.Close();
 						}

