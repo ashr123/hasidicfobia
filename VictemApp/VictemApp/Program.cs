@@ -33,7 +33,7 @@ namespace VictemApp
 				// hello = Encoding.Default.GetBytes("hello world");  //conversion string => byte array
 				byte[] enterPass = Encoding.Default.GetBytes("Please enter password\r\n");
 				ns.Write(enterPass, 0, enterPass.Length);     //sending the message
-				Console.WriteLine("sent from bot: Please enter password\r\n");
+				//Console.WriteLine("sent from bot: Please enter password\r\n");
 				byte[] msg = new byte[256];     //the messages arrive as byte array
 
 				while (client.Connected)  //while the client is connected, we look for incoming messages
@@ -42,12 +42,12 @@ namespace VictemApp
 					{
 						ns.Read(msg, 0, msg.Length);
 						string msgstring = Encoding.Default.GetString(msg).Trim('\0');//the same networkstream reads the message sent by the client
-						Console.Write("got from bot: " + msgstring);
+						//Console.Write("got from bot: " + msgstring);
 						if (msgstring.Substring(0, 6).Equals(pass))
 						{
 							byte[] accessGranted = Encoding.Default.GetBytes("Access granted\r\n");
 							ns.Write(accessGranted, 0, accessGranted.Length);
-							Console.Write("sent from bot: Access granted\r\n");
+							//Console.Write("sent from bot: Access granted\r\n");
 						}
 						else if (msgstring.Substring(0, 10).Equals("Hacked by "))
 						{

