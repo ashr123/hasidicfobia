@@ -4,6 +4,7 @@ using System.Net.Sockets;    //required
 using System.Threading;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
 
 namespace Server
 {
@@ -37,7 +38,7 @@ namespace Server
 																   //Console.WriteLine(BitConverter.ToInt32(data, 0));
 																   //Console.WriteLine("data " + remoteEP.ToString());
 					lock (ip_port_bots) ip_port_bots.Add(new IPEndPoint(remoteEP.Address, BitConverter.ToUInt16(data, 0)));
-					//DisplaySet(ip_port_bots);
+					DisplaySet(ip_port_bots);
 					//udpServer.Send(new byte[] { 1 }, 1, remoteEP); // reply back
 				}
 			});
@@ -91,12 +92,12 @@ namespace Server
 
 		private static void DisplaySet(HashSet<IPEndPoint> set)
 		{
-			Console.Write("{ ");
+            Debug.Write("{ ");
 			foreach (IPEndPoint endPoint in set)
 			{
-				Console.Write(endPoint.ToString() + ", ");
+                Debug.Write(endPoint.ToString() + ", ");
 			}
-			Console.WriteLine(" }");
+            Debug.WriteLine(" }");
 		}
 
 		private static byte[] Combine(byte[] first, byte[] second, byte[] third, byte[] fourth)
